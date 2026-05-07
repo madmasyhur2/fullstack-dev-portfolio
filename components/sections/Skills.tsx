@@ -2,7 +2,8 @@
 
 import { motion } from 'framer-motion'
 import { skills } from '@/data/portfolio'
-import SkillBadge from '@/components/ui/SkillBadge'
+
+const PRIMARY_CATEGORIES = ['Primary Stack', 'Also Ship With']
 
 export default function Skills() {
   const categories = Object.entries(skills)
@@ -22,39 +23,57 @@ export default function Skills() {
         </motion.p>
 
         <motion.h2
-          className="font-syne font-extrabold text-3xl md:text-4xl text-[#F0EEE6] mb-12"
+          className="font-display font-extrabold text-3xl md:text-4xl text-[#F0EEE6] mb-12"
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.5, delay: 0.1 }}
         >
-          Tools & technologies
+          Tools &amp; technologies
         </motion.h2>
 
         <div className="flex flex-col gap-6">
-          {categories.map(([category, techList], i) => (
-            <motion.div
-              key={category}
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true, margin: '-30px' }}
-              transition={{ duration: 0.45, delay: i * 0.08 }}
-              className="flex flex-col sm:flex-row sm:items-start gap-4 sm:gap-8 py-5 border-b border-[#222220] last:border-b-0"
-            >
-              {/* Category label */}
-              <div className="sm:w-32 shrink-0">
-                <span className="font-mono text-xs text-[#4A4844] uppercase tracking-widest">
-                  {category}
-                </span>
-              </div>
-              {/* Badges */}
-              <div className="flex flex-wrap gap-2">
-                {techList.map((skill) => (
-                  <SkillBadge key={skill} skill={skill} />
-                ))}
-              </div>
-            </motion.div>
-          ))}
+          {categories.map(([category, techList], i) => {
+            const isPrimary = category === 'Primary Stack'
+            const isSecondary = category === 'Also Ship With'
+
+            return (
+              <motion.div
+                key={category}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, margin: '-30px' }}
+                transition={{ duration: 0.45, delay: i * 0.08 }}
+                className="flex flex-col sm:flex-row sm:items-start gap-4 sm:gap-8 py-5 border-b border-[#222220] last:border-b-0"
+              >
+                {/* Category label */}
+                <div className="sm:w-40 shrink-0">
+                  <span className={`font-mono text-xs uppercase tracking-widest ${
+                    isPrimary ? 'text-[#E8FF57]' : 'text-[#4A4844]'
+                  }`}>
+                    {category}
+                  </span>
+                </div>
+                {/* Badges */}
+                <div className="flex flex-wrap gap-2">
+                  {techList.map((skill) => (
+                    <span
+                      key={skill}
+                      className={`font-mono text-xs px-3 py-1.5 rounded border transition-all duration-150 cursor-default select-none ${
+                        isPrimary
+                          ? 'text-[#E8FF57] bg-[#E8FF57]/5 border-[#E8FF57]/30 hover:border-[#E8FF57]/60 text-sm font-medium'
+                          : isSecondary
+                          ? 'text-[#8A887F] bg-[#1A1A1A] border-[#222220] hover:border-[#E8FF57]/20 hover:text-[#F0EEE6]'
+                          : 'text-[#8A887F] bg-[#1A1A1A] border-[#222220] hover:border-[#E8FF57]/20 hover:text-[#F0EEE6]'
+                      }`}
+                    >
+                      {skill}
+                    </span>
+                  ))}
+                </div>
+              </motion.div>
+            )
+          })}
         </div>
       </div>
     </section>

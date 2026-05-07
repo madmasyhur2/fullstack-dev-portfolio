@@ -81,12 +81,12 @@ export default function Hero() {
 
         {/* Main Heading */}
         <motion.div variants={itemVariants} className="flex flex-col gap-2">
-          <h1 className="font-syne font-extrabold text-5xl md:text-7xl text-[#F0EEE6] leading-[1.05] tracking-tight">
+          <h1 className="font-display font-extrabold text-5xl md:text-7xl text-[#F0EEE6] leading-[1.05] tracking-tight">
             Building scalable
             <br />
             <span className="text-[#E8FF57]">systems.</span>
           </h1>
-          <p className="font-syne font-extrabold text-5xl md:text-7xl text-[#F0EEE6] leading-[1.05] tracking-tight">
+          <p className="font-display font-extrabold text-5xl md:text-7xl text-[#F0EEE6] leading-[1.05] tracking-tight">
             Shipping reliable
             <br />
             <span style={{ WebkitTextStroke: '1.5px #F0EEE6', color: 'transparent' }}>
@@ -111,7 +111,7 @@ export default function Hero() {
           <button
             onClick={scrollToProjects}
             aria-label="View projects"
-            className="flex items-center gap-2 bg-[#E8FF57] text-[#0A0A0A] font-syne font-bold text-sm px-6 py-3 rounded-lg hover:bg-[#B8CC3A] transition-colors duration-150 focus-visible:ring-2 focus-visible:ring-[#E8FF57]"
+            className="flex items-center gap-2 bg-[#E8FF57] text-[#0A0A0A] font-display font-bold text-sm px-6 py-3 rounded-lg hover:bg-[#B8CC3A] transition-colors duration-150 focus-visible:ring-2 focus-visible:ring-[#E8FF57]"
           >
             View Projects
             <ChevronRight size={16} />

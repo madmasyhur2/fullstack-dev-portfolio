@@ -1,0 +1,107 @@
+---
+title: "Fine-Tuning Stable Diffusion on Batik Patterns — What Actually Worked"
+date: "2026-01-10"
+summary: "Training notes from my Computer Science thesis: DreamBooth fine-tuning pipeline, FID/CLIP evaluation methodology, and why most of my first attempts produced noise."
+tags: ["Python", "PyTorch", "Stable Diffusion", "DreamBooth", "AI/ML"]
+published: true
+---
+
+## Background
+
+My thesis at Brawijaya University asked a specific question: can Stable Diffusion generate authentic Batik patterns that pass expert evaluation? The answer turned out to be "yes, but the path there involves a lot of failed checkpoints."
+
+This post documents the training decisions that moved the needle, not the ones that didn't.
+
+---
+
+## Dataset Construction
+
+The hardest part wasn't training — it was building the dataset. Indonesian Batik has regional variations (Javanese, Balinese, Coastal) with distinct structural rules. Mixing them produced incoherent outputs.
+
+Final dataset: **420 images**, split by motif family, cleaned to remove:
+- Low-resolution scans (below 512px on any axis)
+- Cropped images where pattern continuity was broken
+- Photographs with heavy shadow or cloth distortion
+
+```python
+from PIL import Image
+import os
+
+def validate_image(path: str, min_dim: int = 512) -> bool:
+    try:
+        img = Image.open(path)
+        w, h = img.size
+        return min(w, h) >= min_dim and img.mode in ("RGB", "RGBA")
+    except Exception:
+        return False
+
+valid = [f for f in os.listdir(RAW_DIR) if validate_image(os.path.join(RAW_DIR, f))]
+print(f"Valid images: {len(valid)} / {len(os.listdir(RAW_DIR))}")
+```
+
+---
+
+## DreamBooth Setup
+
+I used the HuggingFace `diffusers` DreamBooth training script with SD 1.5 as the base model.
+
+Key hyperparameters that worked after iteration:
+
+| Parameter | Final Value | Notes |
+|---|---|---|
+| `learning_rate` | `1e-6` | Lower than default; prevented catastrophic forgetting |
+| `max_train_steps` | `1200` | 800 was undertrained; 1500 showed overfitting artifacts |
+| `train_batch_size` | `1` | VRAM constraint on T4 |
+| `prior_preservation_loss_weight` | `1.0` | Critical — prevents language drift |
+
+```bash
+accelerate launch train_dreambooth.py \
+  --pretrained_model_name_or_path="runwayml/stable-diffusion-v1-5" \
+  --instance_data_dir="./dataset/batik_javanese" \
+  --class_data_dir="./dataset/prior_class" \
+  --instance_prompt="a photo of sks batik pattern" \
+  --class_prompt="a photo of batik pattern" \
+  --num_class_images=200 \
+  --resolution=512 \
+  --train_batch_size=1 \
+  --gradient_accumulation_steps=4 \
+  --learning_rate=1e-6 \
+  --max_train_steps=1200 \
+  --with_prior_preservation \
+  --prior_loss_weight=1.0
+```
+
+---
+
+## Evaluation: FID and CLIP
+
+FID (Fréchet Inception Distance) measures distribution similarity between generated and real images. Lower is better.
+
+```python
+from torchmetrics.image.fid import FrechetInceptionDistance
+import torch
+
+fid = FrechetInceptionDistance(feature=2048)
+fid.update(real_images_uint8, real=True)
+fid.update(generated_images_uint8, real=False)
+score = fid.compute()
+print(f"FID: {score:.2f}")  # Target: < 40
+```
+
+CLIP score measured semantic alignment — whether the generated image matched the text prompt. Expert evaluation (3 textile specialists) rated authenticity on a 1–5 scale.
+
+Final model checkpoint: **FID 31.4**, CLIP similarity 0.72, expert mean score **3.8/5**.
+
+---
+
+## What Didn't Work
+
+- **Higher learning rates** (`1e-5`): Destroyed base model's composition ability after 400 steps
+- **No prior preservation**: The model forgot what "batik" meant and started generating generic textile noise
+- **Mixed-motif dataset**: FID improved but expert scores dropped — the model learned average patterns, not specific ones
+
+---
+
+## Conclusion
+
+The fine-tuning pipeline works, but dataset curation is 60% of the result. The domain knowledge that textile experts bring to evaluation is irreplaceable — FID doesn't catch culturally incoherent patterns.

@@ -10,6 +10,7 @@ const navLinks = [
   { label: 'About', href: '#about' },
   { label: 'Projects', href: '#projects' },
   { label: 'Experience', href: '#experience' },
+  { label: 'Blog', href: '/blog', external: true },
   { label: 'Contact', href: '#contact' },
 ]
 
@@ -37,8 +38,9 @@ export default function Navbar() {
     return () => window.removeEventListener('scroll', handleScroll)
   }, [lastScrollY])
 
-  const handleNavClick = (href: string) => {
+  const handleNavClick = (href: string, external?: boolean) => {
     setMobileOpen(false)
+    if (external) return // Let the Link handle navigation
     const el = document.querySelector(href)
     if (el) el.scrollIntoView({ behavior: 'smooth' })
   }
@@ -67,15 +69,25 @@ export default function Navbar() {
 
           {/* Desktop Nav */}
           <div className="hidden md:flex items-center gap-8">
-            {navLinks.map((link) => (
-              <button
-                key={link.href}
-                onClick={() => handleNavClick(link.href)}
-                className="text-[#8A887F] hover:text-[#F0EEE6] text-sm transition-colors duration-150 cursor-pointer"
-              >
-                {link.label}
-              </button>
-            ))}
+            {navLinks.map((link) =>
+              link.external ? (
+                <Link
+                  key={link.href}
+                  href={link.href}
+                  className="text-[#8A887F] hover:text-[#F0EEE6] text-sm transition-colors duration-150"
+                >
+                  {link.label}
+                </Link>
+              ) : (
+                <button
+                  key={link.href}
+                  onClick={() => handleNavClick(link.href, link.external)}
+                  className="text-[#8A887F] hover:text-[#F0EEE6] text-sm transition-colors duration-150 cursor-pointer"
+                >
+                  {link.label}
+                </button>
+              )
+            )}
           </div>
 
           {/* Resume Button + Mobile Toggle */}
@@ -110,15 +122,26 @@ export default function Navbar() {
               className="md:hidden bg-[#111111] border-b border-[#222220] overflow-hidden"
             >
               <div className="max-w-5xl mx-auto px-6 py-4 flex flex-col gap-4">
-                {navLinks.map((link) => (
-                  <button
-                    key={link.href}
-                    onClick={() => handleNavClick(link.href)}
-                    className="text-[#8A887F] hover:text-[#F0EEE6] text-sm text-left transition-colors duration-150"
-                  >
-                    {link.label}
-                  </button>
-                ))}
+                {navLinks.map((link) =>
+                  link.external ? (
+                    <Link
+                      key={link.href}
+                      href={link.href}
+                      onClick={() => setMobileOpen(false)}
+                      className="text-[#8A887F] hover:text-[#F0EEE6] text-sm text-left transition-colors duration-150"
+                    >
+                      {link.label}
+                    </Link>
+                  ) : (
+                    <button
+                      key={link.href}
+                      onClick={() => handleNavClick(link.href)}
+                      className="text-[#8A887F] hover:text-[#F0EEE6] text-sm text-left transition-colors duration-150"
+                    >
+                      {link.label}
+                    </button>
+                  )
+                )}
                 <a
                   href={personal.resumeUrl}
                   download

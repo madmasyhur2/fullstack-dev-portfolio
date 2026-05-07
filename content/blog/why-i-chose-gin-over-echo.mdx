@@ -1,0 +1,77 @@
+---
+title: "Why I Chose Gin Over Echo for REST APIs in Go"
+date: "2026-04-15"
+summary: "A practical comparison from building a production RBAC system — routing performance, middleware ergonomics, and community support."
+tags: ["Golang", "Gin", "REST API", "Backend"]
+published: true
+---
+
+## The Problem
+
+When I started architecting the backend for the Educational Management System, I needed to pick a Go HTTP framework fast. The system needed JWT-based RBAC, structured middleware chains, and clean route grouping for three access tiers: educators, parents, and admins.
+
+I evaluated two serious candidates: **Gin** and **Echo**. Here's what I found after building non-trivial routes in both.
+
+---
+
+## Routing Ergonomics
+
+Gin's route grouping felt more natural for hierarchical APIs:
+
+```go
+v1 := r.Group("/api/v1")
+{
+    admin := v1.Group("/admin", middleware.RequireRole("admin"))
+    admin.GET("/users", handlers.ListUsers)
+    admin.POST("/users", handlers.CreateUser)
+
+    educator := v1.Group("/educator", middleware.RequireRole("educator"))
+    educator.GET("/schedules", handlers.GetSchedules)
+}
+```
+
+Echo handles this similarly, but Gin's compile-time route conflict detection caught errors I'd otherwise have found at runtime. In a solo project where I'm also writing the frontend, that feedback loop matters.
+
+---
+
+## Middleware Execution Order
+
+Gin executes middleware in the order it's defined, which sounds obvious but matters when you're chaining auth → rate limiting → logging. The `c.Next()` / `c.Abort()` pattern is explicit:
+
+```go
+func RequireRole(role string) gin.HandlerFunc {
+    return func(c *gin.Context) {
+        claims, exists := c.Get("claims")
+        if !exists {
+            c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"error": "missing token"})
+            return
+        }
+        userClaims := claims.(*auth.Claims)
+        if userClaims.Role != role {
+            c.AbortWithStatusJSON(http.StatusForbidden, gin.H{"error": "insufficient role"})
+            return
+        }
+        c.Next()
+    }
+}
+```
+
+Echo's middleware approach is equally valid, but I found Gin's `c.Abort()` semantics clearer when short-circuiting auth chains.
+
+---
+
+## Performance
+
+Both frameworks are fast enough that for a school management system with fewer than 1000 concurrent users, the difference is irrelevant. Gin benchmarks slightly faster in raw throughput, but this was not a deciding factor.
+
+---
+
+## Community and Debugging
+
+Gin has a larger Stack Overflow footprint. When I hit a path parameter conflict at 2am, finding a resolved issue was faster with Gin's community size.
+
+---
+
+## Decision
+
+Gin. The middleware ergonomics for role-based access and the route debugging experience tipped it. If I were building a WebSocket-heavy service, I'd revisit Echo — its native WebSocket support is cleaner. For a REST-only RBAC backend, Gin wins on practical grounds.

@@ -75,17 +75,17 @@ export default function ProjectCard({
       </div>
 
       {/* Title */}
-      <h3 className="font-syne font-bold text-lg text-[#F0EEE6] group-hover:text-[#E8FF57] transition-colors duration-200">
+      <h3 className="font-display font-bold text-lg text-[#F0EEE6] group-hover:text-[#E8FF57] transition-colors duration-200">
         {title}
       </h3>
 
-      {/* Description */}
-      <p className="text-[#8A887F] text-sm leading-relaxed line-clamp-3 flex-1">
+      {/* Description — full, no truncation */}
+      <p className="font-sans text-[#8A887F] text-sm leading-relaxed">
         {description}
       </p>
 
       {/* Highlight */}
-      <p className="text-[#E8FF57]/80 text-xs italic font-dm">
+      <p className="text-[#E8FF57]/80 text-xs italic font-sans">
         ↗ {highlight}
       </p>
 
