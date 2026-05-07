@@ -34,7 +34,7 @@ export default function Projects() {
           viewport={{ once: true }}
           transition={{ duration: 0.5, delay: 0.1 }}
         >
-          <h2 className="font-syne font-extrabold text-3xl md:text-4xl text-[#F0EEE6]">
+          <h2 className="font-display font-extrabold text-3xl md:text-4xl text-[#F0EEE6]">
             What I&apos;ve built
           </h2>
 
@@ -57,7 +57,7 @@ export default function Projects() {
           </div>
         </motion.div>
 
-        {/* Cards grid */}
+        {/* Cards grid — no height constraint, cards expand to fit content */}
         <motion.div
           className="grid grid-cols-1 md:grid-cols-2 gap-5"
           layout

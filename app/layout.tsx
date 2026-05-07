@@ -1,31 +1,30 @@
 import type { Metadata } from 'next'
-import { Syne, DM_Sans } from 'next/font/google'
+import { Inter, Bricolage_Grotesque } from 'next/font/google'
 import { Analytics } from '@vercel/analytics/next'
 import './globals.css'
 
-const syne = Syne({
+const inter = Inter({
   subsets: ['latin'],
-  weight: ['700', '800'],
-  variable: '--font-syne',
+  variable: '--font-body',
   display: 'swap',
 })
 
-const dmSans = DM_Sans({
+const bricolage = Bricolage_Grotesque({
   subsets: ['latin'],
-  weight: ['400', '500'],
-  variable: '--font-dm-sans',
+  variable: '--font-display',
+  weight: ['400', '500', '600', '700', '800'],
   display: 'swap',
 })
 
 export const metadata: Metadata = {
   title: 'Muhammad Bin Djafar Almasyhur — Fullstack Developer',
   description:
-    'Fullstack Developer specializing in Golang, Next.js, and TypeScript. Building scalable web systems. Open to remote opportunities.',
+    'Fullstack Developer building production systems in Golang, Next.js, and TypeScript. 80% ops automation at MAYFEYR. 37 modules in 14 weeks at ADMA. Open to remote roles.',
   metadataBase: new URL('https://madmasyhur.dev'),
   openGraph: {
     title: 'Muhammad Bin Djafar Almasyhur — Fullstack Developer',
     description:
-      'Fullstack Developer specializing in Golang, Next.js, and TypeScript. Building scalable web systems. Open to remote opportunities.',
+      'Fullstack Developer building production systems in Golang, Next.js, and TypeScript. Open to remote full-time roles.',
     url: 'https://madmasyhur.dev',
     siteName: 'Muhammad Bin Djafar Almasyhur',
     images: [
@@ -43,7 +42,7 @@ export const metadata: Metadata = {
     card: 'summary_large_image',
     title: 'Muhammad Bin Djafar Almasyhur — Fullstack Developer',
     description:
-      'Fullstack Developer specializing in Golang, Next.js, and TypeScript. Building scalable web systems.',
+      'Fullstack Developer building production Golang APIs and Next.js applications. Open to remote roles.',
     images: ['/og-image.png'],
   },
   robots: {
@@ -69,8 +68,8 @@ export default function RootLayout({
   children: React.ReactNode
 }) {
   return (
-    <html lang="en" className={`${syne.variable} ${dmSans.variable}`}>
-      <body className="bg-[#0A0A0A] text-[#F0EEE6] font-dm antialiased">
+    <html lang="en" className={`${inter.variable} ${bricolage.variable}`}>
+      <body className="bg-[#0A0A0A] text-[#F0EEE6] font-sans antialiased">
         {children}
         <Analytics />
       </body>

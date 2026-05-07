@@ -20,7 +20,7 @@ export default function Experience() {
         </motion.p>
 
         <motion.h2
-          className="font-syne font-extrabold text-3xl md:text-4xl text-[#F0EEE6] mb-14"
+          className="font-display font-extrabold text-3xl md:text-4xl text-[#F0EEE6] mb-14"
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}

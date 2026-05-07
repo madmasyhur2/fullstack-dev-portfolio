@@ -4,10 +4,10 @@ import { motion } from 'framer-motion'
 import { about } from '@/data/portfolio'
 
 const stats = [
-  { value: '3.80', label: 'GPA', sub: 'Cum Laude' },
-  { value: '2+', label: 'Years', sub: 'of experience' },
-  { value: '5+', label: 'Prod', sub: 'deployments' },
-  { value: 'UTC+7', label: 'Timezone', sub: 'Available async' },
+  { value: '3.80', label: 'GPA — Cum Laude' },
+  { value: '80%', label: 'Ops time eliminated at MAYFEYR' },
+  { value: '37', label: 'Modules shipped in 14 weeks' },
+  { value: 'UTC+7', label: 'Remote-ready, async-first' },
 ]
 
 const fadeUpVariants = {
@@ -22,8 +22,6 @@ const fadeUpVariants = {
     },
   }),
 }
-
-
 
 export default function About() {
   return (
@@ -51,7 +49,7 @@ export default function About() {
                 initial="hidden"
                 whileInView="visible"
                 viewport={{ once: true, margin: '-50px' }}
-                className="text-[#8A887F] leading-relaxed text-base"
+                className="font-sans text-[#8A887F] leading-relaxed text-base"
               >
                 {para}
               </motion.p>
@@ -70,11 +68,10 @@ export default function About() {
                 viewport={{ once: true, margin: '-50px' }}
                 className="bg-[#111111] border border-[#222220] rounded-xl p-5 flex flex-col gap-1 hover:border-[#E8FF57]/20 transition-colors duration-300"
               >
-                <span className="font-syne font-extrabold text-3xl text-[#E8FF57] leading-none">
+                <span className="font-display font-extrabold text-3xl text-[#E8FF57] leading-none">
                   {stat.value}
                 </span>
-                <span className="text-[#F0EEE6] text-sm font-medium">{stat.label}</span>
-                <span className="text-[#4A4844] text-xs font-mono">{stat.sub}</span>
+                <span className="font-sans text-[#F0EEE6] text-sm font-medium leading-snug mt-1">{stat.label}</span>
               </motion.div>
             ))}
           </div>

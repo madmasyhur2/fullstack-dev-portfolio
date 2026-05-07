@@ -1,0 +1,118 @@
+---
+title: "Building RBAC in Golang from Scratch — No Libraries"
+date: "2026-03-28"
+summary: "How I implemented a three-tier role-based access control system using JWT RS256 and middleware chains in Gin, without pulling in a permissions library."
+tags: ["Golang", "RBAC", "JWT", "Security", "Backend"]
+published: true
+---
+
+## Why Roll Your Own?
+
+Libraries like Casbin are powerful, but for the Educational Management System I was building, the permission model was simple enough that adding a policy engine would be over-engineering. Three roles. Three route groups. One rule per endpoint. I wanted the logic to live in code, not a DSL.
+
+---
+
+## The Token Structure
+
+JWT claims encode the role directly. I used RS256 (asymmetric) rather than HS256 because the frontend and backend are separate — the frontend only needs the public key to verify tokens, not the signing secret.
+
+```go
+type Claims struct {
+    UserID   int    `json:"user_id"`
+    Role     string `json:"role"` // "admin" | "educator" | "parent"
+    jwt.RegisteredClaims
+}
+
+func GenerateToken(userID int, role string, privateKey *rsa.PrivateKey) (string, error) {
+    claims := Claims{
+        UserID: userID,
+        Role:   role,
+        RegisteredClaims: jwt.RegisteredClaims{
+            ExpiresAt: jwt.NewNumericDate(time.Now().Add(24 * time.Hour)),
+            IssuedAt:  jwt.NewNumericDate(time.Now()),
+        },
+    }
+    token := jwt.NewWithClaims(jwt.SigningMethodRS256, claims)
+    return token.SignedString(privateKey)
+}
+```
+
+---
+
+## The Middleware Chain
+
+Two middleware functions: one extracts and validates the token, one checks the role.
+
+```go
+// Extracts claims, attaches to context
+func AuthRequired(publicKey *rsa.PublicKey) gin.HandlerFunc {
+    return func(c *gin.Context) {
+        header := c.GetHeader("Authorization")
+        if !strings.HasPrefix(header, "Bearer ") {
+            c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"error": "missing bearer token"})
+            return
+        }
+        tokenStr := strings.TrimPrefix(header, "Bearer ")
+        token, err := jwt.ParseWithClaims(tokenStr, &Claims{}, func(t *jwt.Token) (interface{}, error) {
+            if _, ok := t.Method.(*jwt.SigningMethodRSA); !ok {
+                return nil, fmt.Errorf("unexpected signing method: %v", t.Header["alg"])
+            }
+            return publicKey, nil
+        })
+        if err != nil || !token.Valid {
+            c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"error": "invalid token"})
+            return
+        }
+        c.Set("claims", token.Claims.(*Claims))
+        c.Next()
+    }
+}
+
+// Role gate — runs after AuthRequired
+func RequireRole(roles ...string) gin.HandlerFunc {
+    allowed := make(map[string]bool)
+    for _, r := range roles {
+        allowed[r] = true
+    }
+    return func(c *gin.Context) {
+        claims, _ := c.Get("claims")
+        userClaims := claims.(*Claims)
+        if !allowed[userClaims.Role] {
+            c.AbortWithStatusJSON(http.StatusForbidden, gin.H{"error": "access denied"})
+            return
+        }
+        c.Next()
+    }
+}
+```
+
+---
+
+## Route Registration
+
+```go
+auth := r.Group("/api/v1", AuthRequired(publicKey))
+
+admin := auth.Group("/admin", RequireRole("admin"))
+admin.GET("/users", listUsers)
+admin.POST("/users", createUser)
+admin.DELETE("/users/:id", deleteUser)
+
+educator := auth.Group("/educator", RequireRole("educator", "admin"))
+educator.GET("/grades", listGrades)
+educator.POST("/grades", submitGrade)
+
+parent := auth.Group("/parent", RequireRole("parent", "admin"))
+parent.GET("/children", listChildren)
+parent.GET("/reports/:id", getReport)
+```
+
+The `RequireRole("educator", "admin")` pattern lets admins access all lower-tier routes without duplicating handlers.
+
+---
+
+## What I'd Add for Production Scale
+
+- **Refresh token rotation** with a Redis blocklist for revoked tokens
+- **Per-endpoint permission bitmask** if the role count grows beyond 5
+- **Audit log middleware** writing role + endpoint + timestamp to a separate table

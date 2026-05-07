@@ -67,7 +67,7 @@ export default function Contact() {
   }
 
   const inputClass =
-    'w-full bg-[#111111] border border-[#222220] rounded-lg px-4 py-3 text-sm text-[#F0EEE6] placeholder:text-[#4A4844] focus:outline-none focus:border-[#E8FF57]/50 transition-colors duration-150 font-dm'
+    'w-full bg-[#111111] border border-[#222220] rounded-lg px-4 py-3 text-sm text-[#F0EEE6] placeholder:text-[#4A4844] focus:outline-none focus:border-[#E8FF57]/50 transition-colors duration-150 font-sans'
 
   const contactLinks = [
     { icon: <Mail size={16} />, label: 'Email', value: personal.email, href: `mailto:${personal.email}` },
@@ -80,10 +80,10 @@ export default function Contact() {
       <div className="max-w-5xl mx-auto px-6">
         <motion.p className="font-mono text-xs text-[#E8FF57] tracking-widest uppercase mb-6"
           initial={{ opacity: 0, x: -20 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }} transition={{ duration: 0.5 }}>
-          / 05 — Contact
+          / 06 — Contact
         </motion.p>
         <motion.div className="mb-12" initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.5, delay: 0.1 }}>
-          <h2 className="font-syne font-extrabold text-3xl md:text-4xl text-[#F0EEE6] mb-3">Let&apos;s build something together</h2>
+          <h2 className="font-display font-extrabold text-3xl md:text-4xl text-[#F0EEE6] mb-3">Let&apos;s build something together</h2>
           <p className="text-[#8A887F] text-base max-w-lg">Open to remote full-time roles, freelance projects, and interesting collaborations. Response within 24 hours.</p>
         </motion.div>
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-10">
@@ -94,7 +94,7 @@ export default function Contact() {
                   <CheckCircle size={28} className="text-[#E8FF57]" />
                 </div>
                 <div>
-                  <h3 className="font-syne font-bold text-xl text-[#F0EEE6] mb-2">Message sent!</h3>
+                  <h3 className="font-display font-bold text-xl text-[#F0EEE6] mb-2">Message sent!</h3>
                   <p className="text-[#8A887F] text-sm">Thanks for reaching out. I&apos;ll get back to you within 24 hours.</p>
                 </div>
                 <button onClick={() => setFormState('idle')} className="text-xs font-mono text-[#E8FF57] hover:text-[#B8CC3A] underline underline-offset-4 transition-colors">
@@ -129,7 +129,7 @@ export default function Contact() {
                   </div>
                 )}
                 <button type="submit" disabled={formState === 'loading'} aria-label="Send message"
-                  className="flex items-center justify-center gap-2 bg-[#E8FF57] text-[#0A0A0A] font-syne font-bold text-sm px-6 py-3 rounded-lg hover:bg-[#B8CC3A] transition-colors duration-150 disabled:opacity-50 disabled:cursor-not-allowed focus-visible:ring-2 focus-visible:ring-[#E8FF57]">
+                  className="flex items-center justify-center gap-2 bg-[#E8FF57] text-[#0A0A0A] font-display font-bold text-sm px-6 py-3 rounded-lg hover:bg-[#B8CC3A] transition-colors duration-150 disabled:opacity-50 disabled:cursor-not-allowed focus-visible:ring-2 focus-visible:ring-[#E8FF57]">
                   {formState === 'loading' ? (
                     <><div className="w-4 h-4 border-2 border-[#0A0A0A]/30 border-t-[#0A0A0A] rounded-full animate-spin" />Sending...</>
                   ) : (
@@ -155,7 +155,7 @@ export default function Contact() {
               ))}
             </div>
             <a href={personal.resumeUrl} download aria-label="Download Resume PDF"
-              className="flex items-center justify-center gap-3 bg-[#E8FF57] text-[#0A0A0A] font-syne font-bold text-sm px-6 py-4 rounded-xl hover:bg-[#B8CC3A] transition-colors duration-150 focus-visible:ring-2 focus-visible:ring-[#E8FF57]">
+              className="flex items-center justify-center gap-3 bg-[#E8FF57] text-[#0A0A0A] font-display font-bold text-sm px-6 py-4 rounded-xl hover:bg-[#B8CC3A] transition-colors duration-150 focus-visible:ring-2 focus-visible:ring-[#E8FF57]">
               <Download size={16} />Download Resume PDF
             </a>
             <div className="bg-[#111111] border border-[#222220] rounded-xl p-6">

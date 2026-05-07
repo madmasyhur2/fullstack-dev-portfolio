@@ -1,0 +1,152 @@
+---
+title: "Replacing Manual Ops with Python + n8n — How We Eliminated 80% of the Busywork at MAYFEYR"
+date: "2026-02-20"
+summary: "Architecture notes from building a competitor price scraping pipeline, dynamic pricing logic, and a Shopify deployment tool that cut go-live time by half."
+tags: ["Python", "n8n", "Shopify API", "GraphQL", "Automation"]
+published: true
+---
+
+## The Starting Point
+
+When I joined MAYFEYR, the ops workflow looked like this:
+
+1. Someone manually checked competitor prices each morning (30–45 minutes)
+2. Pricing decisions were made in a spreadsheet and uploaded by hand
+3. Shopify store launches required manually copying theme settings, products, and configurations between environments — often taking 3–4 hours
+
+All of this was repeatable, rule-based work. Automatable.
+
+---
+
+## Pipeline 1: Competitor Price Scraping
+
+The scraper runs on a schedule via n8n. Python handles the actual HTTP requests and parsing; n8n orchestrates the schedule, error alerts, and downstream data pushes.
+
+```python
+import httpx
+from bs4 import BeautifulSoup
+from dataclasses import dataclass
+from typing import Optional
+
+@dataclass
+class PricePoint:
+    sku: str
+    competitor: str
+    price: float
+    currency: str
+    scraped_at: str
+
+def scrape_competitor(url: str, sku_map: dict) -> list[PricePoint]:
+    headers = {"User-Agent": "Mozilla/5.0 ..."}
+    resp = httpx.get(url, headers=headers, timeout=10)
+    resp.raise_for_status()
+    soup = BeautifulSoup(resp.text, "html.parser")
+
+    results = []
+    for item in soup.select(".product-item"):
+        raw_sku = item.get("data-sku", "")
+        price_el = item.select_one(".price")
+        if raw_sku in sku_map and price_el:
+            results.append(PricePoint(
+                sku=raw_sku,
+                competitor=url,
+                price=float(price_el.text.strip().replace(",", "")),
+                currency="IDR",
+                scraped_at=datetime.utcnow().isoformat(),
+            ))
+    return results
+```
+
+The n8n workflow:
+1. **Schedule trigger** → 06:00 WIB daily
+2. **HTTP Request** → calls the Python scraper endpoint
+3. **Function node** → applies pricing rules (floor price, margin %)
+4. **Shopify node** → updates variant prices via GraphQL
+
+---
+
+## Pipeline 2: Dynamic Pricing via GraphQL
+
+Shopify's Admin API uses GraphQL. Bulk price updates go through `productVariantsBulkUpdate`:
+
+```graphql
+mutation UpdateVariantPrices($productId: ID!, $variants: [ProductVariantsBulkInput!]!) {
+  productVariantsBulkUpdate(productId: $productId, variants: $variants) {
+    productVariants {
+      id
+      price
+    }
+    userErrors {
+      field
+      message
+    }
+  }
+}
+```
+
+Python constructs the variables from the scraper output and sends the mutation:
+
+```python
+import httpx
+
+SHOPIFY_ENDPOINT = f"https://{STORE}.myshopify.com/admin/api/2024-01/graphql.json"
+
+def bulk_update_prices(product_id: str, variants: list[dict], token: str):
+    query = """mutation UpdateVariantPrices($productId: ID!, $variants: [ProductVariantsBulkInput!]!) {
+        productVariantsBulkUpdate(productId: $productId, variants: $variants) {
+            productVariants { id price }
+            userErrors { field message }
+        }
+    }"""
+    resp = httpx.post(
+        SHOPIFY_ENDPOINT,
+        json={"query": query, "variables": {"productId": product_id, "variants": variants}},
+        headers={"X-Shopify-Access-Token": token, "Content-Type": "application/json"},
+    )
+    return resp.json()
+```
+
+---
+
+## Pipeline 3: Shopify Deployment Tool
+
+The deployment tool scripted the previously manual process of moving a store from staging to production. It used Shopify's Theme API to:
+
+1. Download the current production theme as a zip
+2. Apply staged changes from a local directory
+3. Upload the merged theme to production
+4. Run a smoke-check against critical page routes before publishing
+
+```python
+import shopify
+
+def deploy_theme(staging_dir: str, session: shopify.Session):
+    shopify.ShopifyResource.activate_session(session)
+    themes = shopify.Theme.find()
+    prod_theme = next(t for t in themes if t.role == "main")
+
+    assets = []
+    for root, _, files in os.walk(staging_dir):
+        for fname in files:
+            fpath = os.path.join(root, fname)
+            key = os.path.relpath(fpath, staging_dir).replace("\\", "/")
+            with open(fpath, "rb") as f:
+                content = f.read()
+            asset = shopify.Asset({"theme_id": prod_theme.id, "key": key})
+            asset.attachment = base64.b64encode(content).decode()
+            assets.append(asset)
+
+    for asset in assets:
+        asset.save()
+        print(f"Deployed: {asset.key}")
+```
+
+---
+
+## Result
+
+- **Competitor monitoring**: 0 manual hours/day (was 30–45 min)
+- **Price update cycle**: automated, runs on schedule
+- **Shopify go-live**: from 3–4 hours to ~90 minutes — a >50% reduction
+
+The remaining 20% of ops time involved judgment calls (new product launches, strategic pricing exceptions) that aren't automatable — which is correct.

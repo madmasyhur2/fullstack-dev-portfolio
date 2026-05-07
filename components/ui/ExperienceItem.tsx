@@ -37,7 +37,7 @@ export default function ExperienceItem({
       <div className="flex flex-col gap-2">
         <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-1">
           <div>
-            <h3 className="font-syne font-bold text-[#F0EEE6] text-lg leading-tight">
+            <h3 className="font-display font-bold text-[#F0EEE6] text-lg leading-tight">
               {company}
             </h3>
             <p className="font-mono text-[#E8FF57] text-sm mt-0.5">{role}</p>
