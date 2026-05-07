@@ -27,7 +27,7 @@ html {
 body {
   background-color: var(--bg-primary);
   color: var(--text-primary);
-  font-family: 'DM Sans', system-ui, sans-serif;
+  font-family: var(--font-body), system-ui, sans-serif;
   font-size: 16px;
   line-height: 1.7;
   -webkit-font-smoothing: antialiased;
@@ -82,31 +82,9 @@ body::before {
   background-position: center center;
 }
 
-/* Typography */
-.font-syne {
-  font-family: 'Syne', sans-serif;
-}
-
-.font-dm {
-  font-family: 'DM Sans', sans-serif;
-}
-
-/* Accent text */
-.text-accent {
-  color: var(--accent);
-}
-
 /* Smooth transition defaults */
 a, button {
   transition: all 150ms ease;
-}
-
-/* Line clamp utility */
-.line-clamp-3 {
-  display: -webkit-box;
-  -webkit-line-clamp: 3;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
 }
 
 /* Animated bounce */
