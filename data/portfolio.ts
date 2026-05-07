@@ -22,6 +22,18 @@ export const about = {
 
 export const projects = [
   {
+    title: "Test verify CI/CD Pipeline",
+    slug: "verify-cicd-pipeline",
+    description:
+      "Test verify CI/CD Pipeline",
+    stack: ["Test", "verify", "CI/CD", "Pipeline"],
+    status: "In Progress",
+    github: null,
+    demo: null,
+    highlight: "Test verify CI/CD Pipeline",
+    featured: true,
+  },
+  {
     title: "Educational Management System",
     slug: "edu-management",
     description:
