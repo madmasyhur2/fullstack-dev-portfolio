@@ -5,6 +5,7 @@ const config: Config = {
     './pages/**/*.{js,ts,jsx,tsx,mdx}',
     './components/**/*.{js,ts,jsx,tsx,mdx}',
     './app/**/*.{js,ts,jsx,tsx,mdx}',
+    './content/**/*.{md,mdx}',
   ],
   theme: {
     extend: {
@@ -20,9 +21,9 @@ const config: Config = {
         'border-color': '#222220',
       },
       fontFamily: {
-        syne: ['Syne', 'sans-serif'],
-        dm: ['DM Sans', 'system-ui', 'sans-serif'],
-        mono: ['JetBrains Mono', 'Fira Code', 'monospace'],
+        sans:    ['var(--font-body)', 'system-ui', 'sans-serif'],
+        display: ['var(--font-display)', 'system-ui', 'sans-serif'],
+        mono:    ["'Geist Mono'", 'JetBrains Mono', 'Fira Code', 'monospace'],
       },
       maxWidth: {
         '5xl': '64rem',
