@@ -1,50 +1,49 @@
 'use client'
 
-import { motion } from 'framer-motion'
 import { experience } from '@/data/portfolio'
-import ExperienceItem from '@/components/ui/ExperienceItem'
+import Section from '@/components/ui/Section'
+import SectionHeading from '@/components/ui/SectionHeading'
+import { Stagger } from '@/components/ui/Reveal'
 
 export default function Experience() {
   return (
-    <section id="experience" className="py-24 border-t border-[#222220]" aria-label="Experience section">
-      <div className="max-w-5xl mx-auto px-6">
-        {/* Section label */}
-        <motion.p
-          className="font-mono text-xs text-[#E8FF57] tracking-widest uppercase mb-6"
-          initial={{ opacity: 0, x: -20 }}
-          whileInView={{ opacity: 1, x: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.5 }}
-        >
-          / 03 — Experience
-        </motion.p>
+    <Section id="experience">
+      <SectionHeading eyebrow="Experience" title="Where I've shipped" />
 
-        <motion.h2
-          className="font-display font-extrabold text-3xl md:text-4xl text-[#F0EEE6] mb-14"
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.5, delay: 0.1 }}
-        >
-          Where I&apos;ve worked
-        </motion.h2>
+      <Stagger as="ol" className="mt-12 border-l border-border pl-8">
+        {experience.map((job, i) => (
+          <Stagger.Item
+            as="li"
+            key={job.company}
+            className={`relative ${i === experience.length - 1 ? '' : 'pb-12'}`}
+          >
+            {/* node on the spine */}
+            <span
+              aria-hidden="true"
+              className="absolute -left-[2.3rem] top-1 h-2.5 w-2.5 rounded-full bg-accent ring-4 ring-bg"
+            />
 
-        {/* Timeline */}
-        <div className="relative">
-          {/* Vertical line */}
-          <div
-            className="absolute left-1.5 top-0 bottom-0 w-px bg-[#222220]"
-            aria-hidden="true"
-          />
+            <div className="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1">
+              <h3 className="text-base font-semibold text-text-primary">{job.company}</h3>
+              <span className="label-mono text-xs text-text-muted">{job.period}</span>
+            </div>
+            <p className="mt-0.5 text-sm text-text-secondary">{job.role}</p>
+            <p className="mt-0.5 text-xs text-text-muted">{job.location}</p>
 
-          {/* Experience items */}
-          <div className="flex flex-col">
-            {experience.map((item, i) => (
-              <ExperienceItem key={item.company} {...item} index={i} />
-            ))}
-          </div>
-        </div>
-      </div>
-    </section>
+            <ul className="mt-4 space-y-2.5">
+              {job.bullets.map((b) => (
+                <li key={b} className="flex gap-3 text-sm leading-relaxed text-text-secondary">
+                  <span
+                    aria-hidden="true"
+                    className="mt-2 h-1 w-1 flex-shrink-0 rounded-full bg-accent"
+                  />
+                  {b}
+                </li>
+              ))}
+            </ul>
+          </Stagger.Item>
+        ))}
+      </Stagger>
+    </Section>
   )
 }

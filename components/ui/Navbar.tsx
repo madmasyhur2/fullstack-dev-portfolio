@@ -1,10 +1,10 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import Link from 'next/link'
 import { Menu, X, Download } from 'lucide-react'
+import { motion, AnimatePresence, useReducedMotion } from 'framer-motion'
 import { personal } from '@/data/portfolio'
-import { motion, AnimatePresence } from 'framer-motion'
 
 const navLinks = [
   { label: 'About', href: '#about' },
@@ -15,146 +15,131 @@ const navLinks = [
 ]
 
 export default function Navbar() {
+  const reduce = useReducedMotion()
   const [visible, setVisible] = useState(true)
-  const [lastScrollY, setLastScrollY] = useState(0)
   const [mobileOpen, setMobileOpen] = useState(false)
   const [scrolled, setScrolled] = useState(false)
+  const lastScrollY = useRef(0)
 
   useEffect(() => {
     const handleScroll = () => {
-      const currentY = window.scrollY
-      setScrolled(currentY > 20)
-      if (currentY < 20) {
-        setVisible(true)
-      } else if (currentY > lastScrollY + 5) {
+      const y = window.scrollY
+      setScrolled(y > 20)
+      if (y < 20) setVisible(true)
+      else if (y > lastScrollY.current + 5) {
         setVisible(false)
         setMobileOpen(false)
-      } else if (currentY < lastScrollY - 5) {
-        setVisible(true)
-      }
-      setLastScrollY(currentY)
+      } else if (y < lastScrollY.current - 5) setVisible(true)
+      lastScrollY.current = y
     }
     window.addEventListener('scroll', handleScroll, { passive: true })
     return () => window.removeEventListener('scroll', handleScroll)
-  }, [lastScrollY])
-
-  const handleNavClick = (href: string, external?: boolean) => {
-    setMobileOpen(false)
-    if (external) return // Let the Link handle navigation
-    const el = document.querySelector(href)
-    if (el) el.scrollIntoView({ behavior: 'smooth' })
-  }
+  }, [])
 
   return (
-    <>
-      <motion.nav
-        initial={{ y: -80 }}
-        animate={{ y: visible ? 0 : -80 }}
-        transition={{ duration: 0.3, ease: 'easeInOut' }}
-        className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
-          scrolled
-            ? 'bg-[#0A0A0A]/90 backdrop-blur-sm border-b border-[#222220]'
-            : 'bg-transparent'
-        }`}
-      >
-        <div className="max-w-5xl mx-auto px-6 flex items-center justify-between h-16">
-          {/* Logo */}
-          <Link
-            href="/"
-            aria-label="Home"
-            className="font-mono text-sm font-bold tracking-widest text-[#E8FF57] hover:text-[#B8CC3A] transition-colors"
-          >
-            MUHAMMAD
-          </Link>
+    <motion.nav
+      initial={{ y: reduce ? 0 : -80 }}
+      animate={{ y: reduce ? 0 : visible ? 0 : -80 }}
+      transition={{ duration: reduce ? 0 : 0.3, ease: 'easeInOut' }}
+      className={`fixed inset-x-0 top-0 z-50 transition-colors duration-300 ${
+        scrolled ? 'border-b border-border bg-bg/95' : 'border-b border-transparent bg-transparent'
+      }`}
+    >
+      <div className="mx-auto flex h-16 max-w-shell items-center justify-between px-6 md:px-10">
+        <Link
+          href="/"
+          aria-label="Home"
+          className="font-display text-sm font-semibold tracking-tight text-text-primary transition-colors hover:text-accent"
+        >
+          MBDA<span className="text-accent">.</span>
+        </Link>
 
-          {/* Desktop Nav */}
-          <div className="hidden md:flex items-center gap-8">
-            {navLinks.map((link) =>
-              link.external ? (
-                <Link
-                  key={link.href}
-                  href={link.href}
-                  className="text-[#8A887F] hover:text-[#F0EEE6] text-sm transition-colors duration-150"
-                >
-                  {link.label}
-                </Link>
-              ) : (
-                <button
-                  key={link.href}
-                  onClick={() => handleNavClick(link.href, link.external)}
-                  className="text-[#8A887F] hover:text-[#F0EEE6] text-sm transition-colors duration-150 cursor-pointer"
-                >
-                  {link.label}
-                </button>
-              )
-            )}
-          </div>
-
-          {/* Resume Button + Mobile Toggle */}
-          <div className="flex items-center gap-4">
-            <a
-              href={personal.resumeUrl}
-              download
-              aria-label="Download Resume PDF"
-              className="hidden md:flex items-center gap-2 text-xs font-mono border border-[#E8FF57] text-[#E8FF57] px-3 py-1.5 rounded hover:bg-[#E8FF57] hover:text-[#0A0A0A] transition-all duration-150 focus-visible:ring-2 focus-visible:ring-[#E8FF57]"
-            >
-              <Download size={14} />
-              Resume
-            </a>
-            <button
-              className="md:hidden text-[#8A887F] hover:text-[#F0EEE6] transition-colors p-1"
-              onClick={() => setMobileOpen(!mobileOpen)}
-              aria-label={mobileOpen ? 'Close menu' : 'Open menu'}
-            >
-              {mobileOpen ? <X size={20} /> : <Menu size={20} />}
-            </button>
-          </div>
+        <div className="hidden items-center gap-8 md:flex">
+          {navLinks.map((link) =>
+            link.external ? (
+              <Link
+                key={link.href}
+                href={link.href}
+                className="text-sm text-text-secondary transition-colors hover:text-text-primary"
+              >
+                {link.label}
+              </Link>
+            ) : (
+              <a
+                key={link.href}
+                href={link.href}
+                className="text-sm text-text-secondary transition-colors hover:text-text-primary"
+              >
+                {link.label}
+              </a>
+            )
+          )}
         </div>
 
-        {/* Mobile Drawer */}
-        <AnimatePresence>
-          {mobileOpen && (
-            <motion.div
-              initial={{ opacity: 0, height: 0 }}
-              animate={{ opacity: 1, height: 'auto' }}
-              exit={{ opacity: 0, height: 0 }}
-              transition={{ duration: 0.25, ease: 'easeInOut' }}
-              className="md:hidden bg-[#111111] border-b border-[#222220] overflow-hidden"
-            >
-              <div className="max-w-5xl mx-auto px-6 py-4 flex flex-col gap-4">
-                {navLinks.map((link) =>
-                  link.external ? (
-                    <Link
-                      key={link.href}
-                      href={link.href}
-                      onClick={() => setMobileOpen(false)}
-                      className="text-[#8A887F] hover:text-[#F0EEE6] text-sm text-left transition-colors duration-150"
-                    >
-                      {link.label}
-                    </Link>
-                  ) : (
-                    <button
-                      key={link.href}
-                      onClick={() => handleNavClick(link.href)}
-                      className="text-[#8A887F] hover:text-[#F0EEE6] text-sm text-left transition-colors duration-150"
-                    >
-                      {link.label}
-                    </button>
-                  )
-                )}
-                <a
-                  href={personal.resumeUrl}
-                  download
-                  className="flex items-center gap-2 text-xs font-mono border border-[#E8FF57] text-[#E8FF57] px-3 py-2 rounded w-fit hover:bg-[#E8FF57] hover:text-[#0A0A0A] transition-all duration-150"
-                >
-                  <Download size={12} />
-                  Download Resume
-                </a>
-              </div>
-            </motion.div>
-          )}
-        </AnimatePresence>
-      </motion.nav>
-    </>
+        <div className="flex items-center gap-3">
+          <a
+            href={personal.resumeUrl}
+            download
+            aria-label="Download résumé (PDF)"
+            className="hidden min-h-[40px] items-center gap-2 rounded-lg border border-border-strong px-3.5 text-xs font-medium text-text-primary transition-colors hover:border-accent hover:bg-accent-soft md:inline-flex"
+          >
+            <Download size={14} />
+            Résumé
+          </a>
+          <button
+            className="-mr-1 p-2 text-text-secondary transition-colors hover:text-text-primary md:hidden"
+            onClick={() => setMobileOpen(!mobileOpen)}
+            aria-label={mobileOpen ? 'Close menu' : 'Open menu'}
+            aria-expanded={mobileOpen}
+          >
+            {mobileOpen ? <X size={20} /> : <Menu size={20} />}
+          </button>
+        </div>
+      </div>
+
+      <AnimatePresence>
+        {mobileOpen && (
+          <motion.div
+            initial={{ opacity: 0, height: 0 }}
+            animate={{ opacity: 1, height: 'auto' }}
+            exit={{ opacity: 0, height: 0 }}
+            transition={{ duration: reduce ? 0 : 0.25, ease: 'easeInOut' }}
+            className="overflow-hidden border-b border-border bg-bg md:hidden"
+          >
+            <div className="mx-auto flex max-w-shell flex-col px-6 py-2">
+              {navLinks.map((link) =>
+                link.external ? (
+                  <Link
+                    key={link.href}
+                    href={link.href}
+                    onClick={() => setMobileOpen(false)}
+                    className="flex min-h-[44px] items-center text-sm text-text-secondary transition-colors hover:text-text-primary"
+                  >
+                    {link.label}
+                  </Link>
+                ) : (
+                  <a
+                    key={link.href}
+                    href={link.href}
+                    onClick={() => setMobileOpen(false)}
+                    className="flex min-h-[44px] items-center text-sm text-text-secondary transition-colors hover:text-text-primary"
+                  >
+                    {link.label}
+                  </a>
+                )
+              )}
+              <a
+                href={personal.resumeUrl}
+                download
+                className="mt-2 mb-3 inline-flex min-h-[44px] w-fit items-center gap-2 rounded-lg border border-border-strong px-4 text-xs font-medium text-text-primary"
+              >
+                <Download size={14} />
+                Download résumé
+              </a>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </motion.nav>
   )
 }

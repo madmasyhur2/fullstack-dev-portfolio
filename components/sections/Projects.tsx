@@ -1,85 +1,89 @@
 'use client'
 
-import { useState } from 'react'
-import { motion, AnimatePresence } from 'framer-motion'
-import { projects } from '@/data/portfolio'
+import { projects, moreWork, type BentoArea } from '@/data/portfolio'
+import Section from '@/components/ui/Section'
+import SectionHeading from '@/components/ui/SectionHeading'
+import { Reveal, Stagger } from '@/components/ui/Reveal'
 import ProjectCard from '@/components/ui/ProjectCard'
+import { GithubIcon } from '@/components/ui/SocialIcons'
+import { ArrowUpRight } from 'lucide-react'
 
-type FilterType = 'all' | 'featured'
+const areaClass: Record<BentoArea, string> = {
+  featured: 'bento-featured',
+  project2: 'bento-project2',
+  project3: 'bento-project3',
+  project4: 'bento-project4',
+}
 
 export default function Projects() {
-  const [filter, setFilter] = useState<FilterType>('featured')
-
-  const filtered = filter === 'featured' ? projects.filter((p) => p.featured) : projects
-
   return (
-    <section id="projects" className="py-24 border-t border-[#222220]" aria-label="Projects section">
-      <div className="max-w-5xl mx-auto px-6">
-        {/* Section label */}
-        <motion.p
-          className="font-mono text-xs text-[#E8FF57] tracking-widest uppercase mb-6"
-          initial={{ opacity: 0, x: -20 }}
-          whileInView={{ opacity: 1, x: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.5 }}
-        >
-          / 02 — Projects
-        </motion.p>
+    <Section id="projects">
+      <SectionHeading
+        eyebrow="Work"
+        title="Selected work"
+        subtitle="Agentic systems, automation pipelines, and full-stack platforms."
+      />
 
-        {/* Header row */}
-        <motion.div
-          className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-10"
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.5, delay: 0.1 }}
-        >
-          <h2 className="font-display font-extrabold text-3xl md:text-4xl text-[#F0EEE6]">
-            What I&apos;ve built
-          </h2>
+      <Stagger className="bento-grid mt-12">
+        {projects.map((project) => (
+          <Stagger.Item key={project.title} className={`${areaClass[project.area]} h-full`}>
+            <ProjectCard project={project} />
+          </Stagger.Item>
+        ))}
+      </Stagger>
 
-          {/* Filter tabs */}
-          <div className="flex items-center gap-1 bg-[#111111] border border-[#222220] rounded-lg p-1">
-            {(['featured', 'all'] as FilterType[]).map((f) => (
-              <button
-                key={f}
-                onClick={() => setFilter(f)}
-                aria-label={`Show ${f} projects`}
-                className={`text-xs font-mono px-4 py-1.5 rounded-md capitalize transition-all duration-150 ${
-                  filter === f
-                    ? 'bg-[#E8FF57] text-[#0A0A0A] font-bold'
-                    : 'text-[#8A887F] hover:text-[#F0EEE6]'
-                }`}
-              >
-                {f}
-              </button>
-            ))}
-          </div>
-        </motion.div>
-
-        {/* Cards grid — no height constraint, cards expand to fit content */}
-        <motion.div
-          className="grid grid-cols-1 md:grid-cols-2 gap-5"
-          layout
-        >
-          <AnimatePresence mode="popLayout">
-            {filtered.map((project, i) => (
-              <motion.div
-                key={project.slug}
-                layout
-                initial={{ opacity: 0, y: 30 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, scale: 0.95 }}
-                transition={{ duration: 0.4, delay: i * 0.08, ease: 'easeOut' }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true, margin: '-50px' }}
-              >
-                <ProjectCard {...project} />
-              </motion.div>
-            ))}
-          </AnimatePresence>
-        </motion.div>
-      </div>
-    </section>
+      {/* More work — compact secondary list */}
+      <Reveal className="mt-16">
+        <p className="label-mono text-xs text-text-muted">More work</p>
+        <ul className="mt-4 border-t border-border">
+          {moreWork.map((item) => {
+            const rowClass =
+              'group flex flex-col gap-3 py-4 sm:flex-row sm:items-center sm:justify-between sm:gap-6'
+            const inner = (
+              <>
+                <div className="min-w-0">
+                  <h3 className="flex items-center gap-1.5 text-sm font-medium text-text-primary transition-colors group-hover:text-accent">
+                    {item.title}
+                    {item.github && (
+                      <ArrowUpRight
+                        size={14}
+                        className="text-text-muted transition-colors group-hover:text-accent"
+                      />
+                    )}
+                  </h3>
+                  <p className="mt-1 text-sm text-text-secondary">{item.blurb}</p>
+                </div>
+                <ul className="flex flex-shrink-0 flex-wrap gap-2">
+                  {item.stack.map((s) => (
+                    <li
+                      key={s}
+                      className="rounded-md border border-border px-2 py-0.5 text-xs text-text-muted"
+                    >
+                      {s}
+                    </li>
+                  ))}
+                </ul>
+              </>
+            )
+            return (
+              <li key={item.title} className="border-b border-border">
+                {item.github ? (
+                  <a
+                    href={item.github}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className={rowClass}
+                  >
+                    {inner}
+                  </a>
+                ) : (
+                  <div className={rowClass}>{inner}</div>
+                )}
+              </li>
+            )
+          })}
+        </ul>
+      </Reveal>
+    </Section>
   )
 }

@@ -10,37 +10,57 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
-        'bg-primary': '#0A0A0A',
-        'bg-secondary': '#111111',
-        'bg-tertiary': '#1A1A1A',
-        'accent': '#E8FF57',
-        'accent-dim': '#B8CC3A',
-        'text-primary': '#F0EEE6',
-        'text-secondary': '#8A887F',
-        'text-tertiary': '#4A4844',
-        'border-color': '#222220',
+        bg: '#0F1117',
+        surface: '#1E2130',
+        'surface-raised': '#252A3D',
+        border: '#2D3148',
+        'border-strong': '#3A3F5C',
+        accent: '#6366F1',
+        'accent-hover': '#4F46E5',
+        'text-primary': '#F8F9FA',
+        'text-secondary': '#94A3B8',
+        'text-muted': '#5B6478',
+        success: '#10B981',
       },
       fontFamily: {
-        sans:    ['var(--font-body)', 'system-ui', 'sans-serif'],
+        sans: ['var(--font-body)', 'system-ui', 'sans-serif'],
         display: ['var(--font-display)', 'system-ui', 'sans-serif'],
-        mono:    ["'Geist Mono'", 'JetBrains Mono', 'Fira Code', 'monospace'],
+      },
+      borderRadius: {
+        // spec: 8px components, 12px cards
+        DEFAULT: '8px',
+        lg: '8px',
+        xl: '12px',
+        card: '12px',
       },
       maxWidth: {
-        '5xl': '64rem',
+        shell: '72rem', // 1152px page shell
+        prose: '38rem', // bio reading column
       },
-      animation: {
-        'bounce-slow': 'bounce-slow 2s ease-in-out infinite',
-        'pulse-accent': 'pulse-accent 2s ease-in-out infinite',
+      boxShadow: {
+        // subtle card-hover lift (spec: "subtle shadow only")
+        card: '0 1px 2px rgba(0,0,0,0.3)',
+        'card-hover':
+          '0 10px 30px -12px rgba(99,102,241,0.25), 0 4px 12px -6px rgba(0,0,0,0.5)',
       },
       keyframes: {
-        'bounce-slow': {
-          '0%, 100%': { transform: 'translateY(0)' },
-          '50%': { transform: 'translateY(8px)' },
+        // node-graph signature (CSS-only, hero background)
+        'edge-flow': {
+          to: { strokeDashoffset: '-24' },
         },
-        'pulse-accent': {
-          '0%, 100%': { opacity: '1' },
-          '50%': { opacity: '0.4' },
+        'node-pulse': {
+          '0%, 100%': { opacity: '0.45' },
+          '50%': { opacity: '1' },
         },
+        'scroll-cue': {
+          '0%, 100%': { transform: 'translateY(0)', opacity: '0.4' },
+          '50%': { transform: 'translateY(6px)', opacity: '1' },
+        },
+      },
+      animation: {
+        'edge-flow': 'edge-flow 3.2s linear infinite',
+        'node-pulse': 'node-pulse 3.6s ease-in-out infinite',
+        'scroll-cue': 'scroll-cue 2s ease-in-out infinite',
       },
     },
   },

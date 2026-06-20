@@ -1,19 +1,15 @@
-'use client'
-
 import { personal } from '@/data/portfolio'
 
 export default function Footer() {
   const year = new Date().getFullYear()
 
   return (
-    <footer className="border-t border-[#222220] py-6" aria-label="Footer">
-      <div className="max-w-5xl mx-auto px-6 flex flex-col sm:flex-row items-center justify-between gap-2">
-        <p className="text-[#4A4844] text-xs font-mono">
+    <footer className="border-t border-border px-6 py-8 md:px-10" aria-label="Footer">
+      <div className="mx-auto flex max-w-shell flex-col items-center justify-between gap-2 text-xs text-text-muted sm:flex-row">
+        <p>
           © {year} {personal.name}
         </p>
-        <p className="text-[#4A4844] text-xs font-mono">
-          Built with Next.js + TailwindCSS
-        </p>
+        <p>Built with Next.js &amp; Tailwind CSS</p>
       </div>
     </footer>
   )

@@ -2,19 +2,25 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Design tokens — mirror of constants/theme.ts */
 :root {
-  --bg-primary: #0A0A0A;
-  --bg-secondary: #111111;
-  --bg-tertiary: #1A1A1A;
-  --accent: #E8FF57;
-  --accent-dim: #B8CC3A;
-  --text-primary: #F0EEE6;
-  --text-secondary: #8A887F;
-  --text-tertiary: #4A4844;
-  --border: #222220;
+  --bg: #0f1117;
+  --surface: #1e2130;
+  --surface-raised: #252a3d;
+  --border: #2d3148;
+  --border-strong: #3a3f5c;
+  --accent: #6366f1;
+  --accent-hover: #4f46e5;
+  --accent-soft: rgba(99, 102, 241, 0.12);
+  --text-primary: #f8f9fa;
+  --text-secondary: #94a3b8;
+  --text-muted: #5b6478;
+  --success: #10b981;
 }
 
-* {
+*,
+*::before,
+*::after {
   box-sizing: border-box;
   padding: 0;
   margin: 0;
@@ -22,85 +28,108 @@
 
 html {
   scroll-behavior: smooth;
+  /* anchor scrolls clear the fixed navbar */
+  scroll-padding-top: 5rem;
 }
 
 body {
-  background-color: var(--bg-primary);
+  background-color: var(--bg);
   color: var(--text-primary);
   font-family: var(--font-body), system-ui, sans-serif;
   font-size: 16px;
-  line-height: 1.7;
+  line-height: 1.65;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
 }
 
-/* Noise texture overlay */
-body::before {
-  content: '';
-  position: fixed;
-  inset: 0;
-  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.03'/%3E%3C/svg%3E");
-  pointer-events: none;
-  z-index: 1000;
-  opacity: 0.4;
-}
-
-/* Custom scrollbar */
-::-webkit-scrollbar {
-  width: 4px;
-}
-::-webkit-scrollbar-track {
-  background: var(--bg-primary);
-}
-::-webkit-scrollbar-thumb {
-  background: var(--border);
-  border-radius: 2px;
-}
-::-webkit-scrollbar-thumb:hover {
-  background: var(--text-tertiary);
-}
-
-/* Selection */
+/* Indigo selection */
 ::selection {
   background: var(--accent);
-  color: #0A0A0A;
+  color: #fff;
 }
 
-/* Focus styles */
+/* Visible keyboard focus (indigo halo) */
 :focus-visible {
   outline: 2px solid var(--accent);
   outline-offset: 3px;
-  border-radius: 4px;
+  border-radius: 6px;
 }
 
-/* Grid background for hero */
-.hero-grid {
-  background-image:
-    linear-gradient(var(--border) 1px, transparent 1px),
-    linear-gradient(90deg, var(--border) 1px, transparent 1px);
-  background-size: 60px 60px;
-  background-position: center center;
+/* Slim slate scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+::-webkit-scrollbar-track {
+  background: var(--bg);
+}
+::-webkit-scrollbar-thumb {
+  background: var(--border);
+  border-radius: 999px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--border-strong);
 }
 
-/* Smooth transition defaults */
-a, button {
-  transition: all 150ms ease;
+/* Hero ambient wash — static indigo glow behind the headline (top-left) */
+.hero-glow {
+  background: radial-gradient(
+    60% 50% at 22% 30%,
+    rgba(99, 102, 241, 0.1) 0%,
+    transparent 70%
+  );
 }
 
-/* Animated bounce */
-@keyframes bounce-slow {
-  0%, 100% { transform: translateY(0); }
-  50% { transform: translateY(8px); }
-}
-.animate-bounce-slow {
-  animation: bounce-slow 2s ease-in-out infinite;
+/* Small technical label — Inter, tracked + tabular numerals.
+   Carries the "precise dashboard" tone without a second typeface. */
+.label-mono {
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
 }
 
-/* Pulse accent */
-@keyframes pulse-accent {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0.4; }
+/*
+ * Projects bento grid (spec named areas, desktop ≥ 768px):
+ *   [featured] [featured] [project-2]
+ *   [project-3] [project-4] [project-4]
+ */
+.bento-grid {
+  display: grid;
+  gap: 16px;
 }
-.animate-pulse-accent {
-  animation: pulse-accent 2s ease-in-out infinite;
+@media (min-width: 768px) {
+  .bento-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    grid-template-areas:
+      'featured featured project2'
+      'project3 project4 project4';
+  }
+  .bento-featured {
+    grid-area: featured;
+  }
+  .bento-project2 {
+    grid-area: project2;
+  }
+  .bento-project3 {
+    grid-area: project3;
+  }
+  .bento-project4 {
+    grid-area: project4;
+  }
+}
+
+/* Respect user motion preferences — kills Framer + CSS motion alike */
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
 }
