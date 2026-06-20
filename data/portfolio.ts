@@ -73,9 +73,8 @@ export const projects: Project[] = [
     ],
     description:
       'Full-stack LangGraph agentic system for campaign moderation. Multi-node orchestration with Gemini Flash for high-volume classification and Gemini Pro for final decision nodes. Next.js human-in-the-loop review interface with explicit human/AI approval boundaries. Deployed on Railway and Vercel.',
-    // TODO(muhammad): add the real repo + live demo URLs once deployed.
-    github: null,
-    demo: null,
+    github: 'https://github.com/madmasyhur2/launchgood-ts-agent',
+    demo: 'https://launchgood-ts-agent.vercel.app',
     area: 'featured',
     featured: true,
   },
