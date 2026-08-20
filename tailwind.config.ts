@@ -25,6 +25,17 @@ const config: Config = {
       fontFamily: {
         sans: ['var(--font-body)', 'system-ui', 'sans-serif'],
         display: ['var(--font-display)', 'system-ui', 'sans-serif'],
+        // Code only. Declared explicitly so fenced blocks are a deliberate
+        // choice rather than whatever Tailwind's default happens to be; kept to
+        // system faces so the page still ships exactly two webfonts.
+        mono: [
+          'ui-monospace',
+          'SFMono-Regular',
+          'Menlo',
+          'Consolas',
+          'Liberation Mono',
+          'monospace',
+        ],
       },
       borderRadius: {
         // spec: 8px components, 12px cards

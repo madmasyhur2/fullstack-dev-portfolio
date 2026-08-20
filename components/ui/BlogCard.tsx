@@ -16,31 +16,29 @@ export default function BlogCard({ post }: BlogCardProps) {
   return (
     <Link
       href={`/blog/${post.slug}`}
-      className="group bg-[#111111] border border-[#222220] rounded-xl p-5 sm:p-6 flex flex-col gap-4 hover:border-[#E8FF57]/30 transition-all duration-300 hover:scale-[1.01]"
+      className="group flex h-full flex-col gap-4 rounded-card border border-border bg-surface p-5 transition-all duration-200 hover:border-accent hover:shadow-card-hover sm:p-6"
     >
       {/* Meta row */}
-      <div className="flex items-center gap-3 text-xs font-mono text-[#4A4844]">
+      <div className="label-mono flex items-center gap-3 text-xs text-text-muted">
         <span>{formattedDate}</span>
-        <span>·</span>
+        <span aria-hidden="true">·</span>
         <span>{post.readingTime}</span>
       </div>
 
       {/* Title */}
-      <h3 className="font-display font-bold text-lg text-[#F0EEE6] group-hover:text-[#E8FF57] transition-colors duration-200 leading-snug">
+      <h3 className="font-display text-lg font-semibold leading-snug text-text-primary transition-colors duration-200 group-hover:text-accent">
         {post.title}
       </h3>
 
       {/* Summary — full, no truncation */}
-      <p className="font-sans text-[#8A887F] text-sm leading-relaxed">
-        {post.summary}
-      </p>
+      <p className="text-sm leading-relaxed text-text-secondary">{post.summary}</p>
 
-      {/* Tags */}
-      <div className="flex flex-wrap gap-2">
+      {/* Tags — same chip as the stack list on ProjectCard */}
+      <div className="flex min-w-0 flex-wrap gap-2">
         {post.tags.map((tag) => (
           <span
             key={tag}
-            className="font-mono text-xs text-[#8A887F] bg-[#1A1A1A] border border-[#222220] rounded px-2.5 py-1"
+            className="break-words rounded-md border border-border px-2 py-1 text-xs text-text-secondary"
           >
             {tag}
           </span>
@@ -48,9 +46,9 @@ export default function BlogCard({ post }: BlogCardProps) {
       </div>
 
       {/* Arrow link */}
-      <div className="flex items-center gap-1.5 text-xs font-mono text-[#E8FF57]/70 group-hover:text-[#E8FF57] transition-colors duration-200 mt-auto pt-1">
+      <div className="mt-auto flex items-center gap-1.5 pt-1 text-sm text-text-secondary transition-colors duration-200 group-hover:text-accent">
         Read post
-        <ArrowRight size={12} className="group-hover:translate-x-1 transition-transform duration-200" />
+        <ArrowRight size={14} className="transition-transform duration-200 group-hover:translate-x-1" />
       </div>
     </Link>
   )

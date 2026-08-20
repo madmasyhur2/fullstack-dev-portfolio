@@ -2,6 +2,7 @@ import Link from 'next/link'
 import { notFound } from 'next/navigation'
 import * as runtime from 'react/jsx-runtime'
 import { evaluate } from '@mdx-js/mdx'
+import remarkGfm from 'remark-gfm'
 import { getAllPosts, getPostBySlug } from '@/lib/mdx'
 import { MDXComponents } from '@/components/ui/MDXComponents'
 import type { Metadata } from 'next'
@@ -38,9 +39,12 @@ export default async function BlogPost({ params }: Props) {
   }
 
   // Compile MDX using @mdx-js/mdx evaluate — uses the project's own React runtime
-  // This avoids the React version mismatch caused by next-mdx-remote/rsc
+  // This avoids the React version mismatch caused by next-mdx-remote/rsc.
+  // remark-gfm is what turns pipe tables, strikethrough and task lists into
+  // real nodes; without it a table renders as a paragraph of literal pipes.
   const { default: MDXContent } = await evaluate(post.content, {
     ...runtime,
+    remarkPlugins: [remarkGfm],
     baseUrl: import.meta.url,
   })
 
@@ -51,37 +55,39 @@ export default async function BlogPost({ params }: Props) {
   })
 
   return (
-    <div className="min-h-screen bg-[#0A0A0A] text-[#F0EEE6]">
-      <div className="max-w-2xl mx-auto py-12 sm:py-16 px-5 sm:px-6">
+    <div className="min-h-screen bg-bg text-text-primary">
+      {/* pt clears the fixed 64px navbar, then restores the original gap above
+          the back link (32px on phones, 64px from sm up) */}
+      <div className="mx-auto max-w-2xl px-5 pb-12 pt-24 sm:px-6 sm:pb-16 sm:pt-32">
         {/* Back link — py/-my pair grows the tap target to 44px without moving it,
             so the spacing below lives on the wrapper instead of the link */}
         <div className="mb-12">
           <Link
             href="/blog"
-            className="inline-flex items-center gap-2 font-mono text-xs text-[#4A4844] hover:text-[#E8FF57] transition-colors py-3.5 -my-3.5"
+            className="-my-3.5 inline-flex items-center gap-2 py-3.5 text-sm text-text-secondary transition-colors hover:text-text-primary"
           >
             ← All posts
           </Link>
         </div>
 
         {/* Title */}
-        <h1 className="font-display font-extrabold text-2xl sm:text-3xl md:text-4xl text-[#F0EEE6] leading-tight sm:leading-tight mb-6 break-words">
+        <h1 className="mb-6 break-words font-display text-2xl font-semibold leading-tight tracking-tight text-text-primary sm:text-3xl sm:leading-tight md:text-4xl">
           {post.title}
         </h1>
 
         {/* Metadata row */}
-        <div className="flex flex-wrap items-center gap-3 mb-4">
-          <span className="font-mono text-xs text-[#4A4844]">{formattedDate}</span>
-          <span className="text-[#222220]">·</span>
-          <span className="font-mono text-xs text-[#4A4844]">{post.readingTime}</span>
+        <div className="label-mono mb-4 flex flex-wrap items-center gap-3 text-xs text-text-muted">
+          <span>{formattedDate}</span>
+          <span aria-hidden="true">·</span>
+          <span>{post.readingTime}</span>
         </div>
 
-        {/* Tags */}
-        <div className="flex flex-wrap gap-2 mb-12">
+        {/* Tags — same chip as the stack list on ProjectCard */}
+        <div className="mb-12 flex min-w-0 flex-wrap gap-2">
           {post.tags.map((tag) => (
             <span
               key={tag}
-              className="font-mono text-xs text-[#8A887F] bg-[#1A1A1A] border border-[#222220] rounded px-2.5 py-1"
+              className="break-words rounded-md border border-border px-2 py-1 text-xs text-text-secondary"
             >
               {tag}
             </span>
@@ -89,18 +95,18 @@ export default async function BlogPost({ params }: Props) {
         </div>
 
         {/* Divider */}
-        <div className="border-t border-[#222220] mb-10" />
+        <div className="mb-10 border-t border-border" />
 
-        {/* MDX Content — rendered with custom dark-theme components */}
+        {/* MDX Content — rendered with the shared token-styled components */}
         <article>
           <MDXContent components={MDXComponents} />
         </article>
 
         {/* Footer nav */}
-        <div className="border-t border-[#222220] mt-16 pt-8">
+        <div className="mt-16 border-t border-border pt-8">
           <Link
             href="/blog"
-            className="inline-flex items-center gap-2 font-mono text-xs text-[#4A4844] hover:text-[#E8FF57] transition-colors py-3.5 -my-3.5"
+            className="-my-3.5 inline-flex items-center gap-2 py-3.5 text-sm text-text-secondary transition-colors hover:text-text-primary"
           >
             ← Back to all posts
           </Link>

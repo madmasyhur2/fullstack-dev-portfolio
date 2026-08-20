@@ -5,31 +5,30 @@ type HTMLProps<T extends keyof JSX.IntrinsicElements> = ComponentPropsWithoutRef
 export const MDXComponents = {
   h2: (props: HTMLProps<'h2'>) => (
     <h2
-      className="font-display text-2xl font-bold text-[#F0EEE6] mt-10 mb-4 leading-snug break-words"
+      className="mt-10 mb-4 break-words font-display text-2xl font-semibold leading-snug text-text-primary"
       {...props}
     />
   ),
   h3: (props: HTMLProps<'h3'>) => (
     <h3
-      className="font-display text-xl font-semibold text-[#F0EEE6] mt-8 mb-3 leading-snug break-words"
+      className="mt-8 mb-3 break-words font-display text-xl font-semibold leading-snug text-text-primary"
       {...props}
     />
   ),
   h4: (props: HTMLProps<'h4'>) => (
     <h4
-      className="font-display text-lg font-semibold text-[#F0EEE6] mt-6 mb-2 break-words"
+      className="mt-6 mb-2 break-words font-display text-lg font-semibold text-text-primary"
       {...props}
     />
   ),
   p: (props: HTMLProps<'p'>) => (
-    <p
-      className="font-sans text-[#8A887F] leading-7 mb-5 break-words"
-      {...props}
-    />
+    <p className="mb-5 break-words leading-7 text-text-secondary" {...props} />
   ),
+  // Inline code stays on text-primary rather than the accent: indigo is this
+  // site's interactive colour, and a code pill is not a link.
   code: (props: HTMLProps<'code'>) => (
     <code
-      className="font-mono text-sm bg-[#1A1A1A] text-[#E8FF57] px-1.5 py-0.5 rounded border border-[#222220] break-words"
+      className="break-words rounded border border-border bg-surface-raised px-1.5 py-0.5 font-mono text-sm text-text-primary"
       {...props}
     />
   ),
@@ -39,13 +38,15 @@ export const MDXComponents = {
   // `language-*` class instead would miss a fence written without a language.
   pre: (props: HTMLProps<'pre'>) => (
     <pre
-      className="bg-[#111111] border border-[#222220] rounded-lg p-3 sm:p-4 overflow-x-auto mb-6 text-[13px] sm:text-sm font-mono text-[#8A887F] leading-relaxed sm:leading-relaxed [&_code]:rounded-none [&_code]:border-0 [&_code]:bg-transparent [&_code]:p-0 [&_code]:text-[length:inherit] [&_code]:text-inherit"
+      className="mb-6 overflow-x-auto rounded-lg border border-border bg-surface p-3 font-mono text-[13px] leading-relaxed text-text-secondary sm:p-4 sm:text-sm sm:leading-relaxed [&_code]:rounded-none [&_code]:border-0 [&_code]:bg-transparent [&_code]:p-0 [&_code]:text-[length:inherit] [&_code]:text-inherit"
       {...props}
     />
   ),
+  // accent-hover is darker than accent — right for a button fill, wrong for
+  // text on a dark page — so the hover brightens to text-primary instead.
   a: (props: HTMLProps<'a'>) => (
     <a
-      className="text-[#E8FF57] underline underline-offset-2 hover:text-[#B8CC3A] transition-colors break-words break-anywhere"
+      className="break-words break-anywhere text-accent underline underline-offset-2 transition-colors hover:text-text-primary"
       target={props.href?.startsWith('http') ? '_blank' : undefined}
       rel={props.href?.startsWith('http') ? 'noopener noreferrer' : undefined}
       {...props}
@@ -53,49 +54,41 @@ export const MDXComponents = {
   ),
   ul: (props: HTMLProps<'ul'>) => (
     <ul
-      className="list-disc list-inside font-sans text-[#8A887F] space-y-2 mb-5 leading-7"
+      className="mb-5 list-inside list-disc space-y-2 leading-7 text-text-secondary"
       {...props}
     />
   ),
   ol: (props: HTMLProps<'ol'>) => (
     <ol
-      className="list-decimal list-inside font-sans text-[#8A887F] space-y-2 mb-5 leading-7"
+      className="mb-5 list-inside list-decimal space-y-2 leading-7 text-text-secondary"
       {...props}
     />
   ),
   li: (props: HTMLProps<'li'>) => (
-    <li className="font-sans text-[#8A887F] break-words" {...props} />
+    <li className="break-words text-text-secondary" {...props} />
   ),
   blockquote: (props: HTMLProps<'blockquote'>) => (
     <blockquote
-      className="border-l-2 border-[#E8FF57]/40 pl-4 italic text-[#8A887F] my-6 font-sans"
+      className="my-6 border-l-2 border-accent pl-4 italic text-text-secondary"
       {...props}
     />
   ),
-  hr: () => (
-    <hr className="border-t border-[#222220] my-8" />
-  ),
+  hr: () => <hr className="my-8 border-t border-border" />,
   table: (props: HTMLProps<'table'>) => (
-    <div className="overflow-x-auto mb-6">
-      <table
-        className="w-full text-sm font-mono border-collapse border border-[#222220]"
-        {...props}
-      />
+    <div className="mb-6 overflow-x-auto">
+      <table className="w-full border-collapse border border-border text-sm" {...props} />
     </div>
   ),
   th: (props: HTMLProps<'th'>) => (
     <th
-      className="border border-[#222220] px-4 py-2 text-left text-[#F0EEE6] bg-[#1A1A1A] font-semibold"
+      className="border border-border bg-surface px-4 py-2 text-left font-semibold text-text-primary"
       {...props}
     />
   ),
   td: (props: HTMLProps<'td'>) => (
-    <td
-      className="border border-[#222220] px-4 py-2 text-[#8A887F]"
-      {...props}
-    />
+    <td className="border border-border px-4 py-2 text-text-secondary" {...props} />
   ),
   strong: (props: HTMLProps<'strong'>) => (
-    <strong className="text-[#F0EEE6] font-semibold" {...props} />
+    <strong className="font-semibold text-text-primary" {...props} />
   ),
 }

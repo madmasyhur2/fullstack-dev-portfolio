@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useRef } from 'react'
 import Link from 'next/link'
+import { usePathname } from 'next/navigation'
 import { Menu, X, Download } from 'lucide-react'
 import { motion, AnimatePresence, useReducedMotion } from 'framer-motion'
 import { personal } from '@/data/portfolio'
@@ -14,8 +15,51 @@ const navLinks = [
   { label: 'Contact', href: '#contact' },
 ]
 
+type NavItem = (typeof navLinks)[number]
+
+/* The nav is mounted on the blog routes too, where a bare '#about' points at
+   nothing. Off the homepage the in-page links have to carry the route — and
+   that makes them navigations, so they go through <Link> instead of a raw
+   anchor. On '/' they stay raw anchors, which is what the smooth-scroll and
+   scroll-padding rules in globals.css are written against. */
+function NavLink({
+  link,
+  pathname,
+  className,
+  onClick,
+}: {
+  link: NavItem
+  pathname: string
+  className: string
+  onClick?: () => void
+}) {
+  const onHome = pathname === '/'
+
+  if (link.external || !onHome) {
+    const href = link.external ? link.href : `/${link.href}`
+    const current = link.external && pathname.startsWith(link.href)
+    return (
+      <Link
+        href={href}
+        onClick={onClick}
+        aria-current={current ? 'page' : undefined}
+        className={`${className} ${current ? 'text-text-primary' : ''}`}
+      >
+        {link.label}
+      </Link>
+    )
+  }
+
+  return (
+    <a href={link.href} onClick={onClick} className={className}>
+      {link.label}
+    </a>
+  )
+}
+
 export default function Navbar() {
   const reduce = useReducedMotion()
+  const pathname = usePathname()
   const [visible, setVisible] = useState(true)
   const [mobileOpen, setMobileOpen] = useState(false)
   const [scrolled, setScrolled] = useState(false)
@@ -89,25 +133,14 @@ export default function Navbar() {
         </Link>
 
         <div className="hidden items-center gap-8 md:flex">
-          {navLinks.map((link) =>
-            link.external ? (
-              <Link
-                key={link.href}
-                href={link.href}
-                className="inline-flex min-h-[44px] items-center text-sm text-text-secondary transition-colors hover:text-text-primary"
-              >
-                {link.label}
-              </Link>
-            ) : (
-              <a
-                key={link.href}
-                href={link.href}
-                className="inline-flex min-h-[44px] items-center text-sm text-text-secondary transition-colors hover:text-text-primary"
-              >
-                {link.label}
-              </a>
-            )
-          )}
+          {navLinks.map((link) => (
+            <NavLink
+              key={link.href}
+              link={link}
+              pathname={pathname}
+              className="inline-flex min-h-[44px] items-center text-sm text-text-secondary transition-colors hover:text-text-primary"
+            />
+          ))}
         </div>
 
         <div className="flex items-center gap-3">
@@ -141,27 +174,15 @@ export default function Navbar() {
             className="overflow-hidden border-b border-border bg-bg md:hidden"
           >
             <div className="mx-auto flex max-w-shell flex-col px-5 py-2 sm:px-6">
-              {navLinks.map((link) =>
-                link.external ? (
-                  <Link
-                    key={link.href}
-                    href={link.href}
-                    onClick={() => setMobileOpen(false)}
-                    className="flex min-h-[44px] items-center text-sm text-text-secondary transition-colors hover:text-text-primary"
-                  >
-                    {link.label}
-                  </Link>
-                ) : (
-                  <a
-                    key={link.href}
-                    href={link.href}
-                    onClick={() => setMobileOpen(false)}
-                    className="flex min-h-[44px] items-center text-sm text-text-secondary transition-colors hover:text-text-primary"
-                  >
-                    {link.label}
-                  </a>
-                )
-              )}
+              {navLinks.map((link) => (
+                <NavLink
+                  key={link.href}
+                  link={link}
+                  pathname={pathname}
+                  onClick={() => setMobileOpen(false)}
+                  className="flex min-h-[44px] items-center text-sm text-text-secondary transition-colors hover:text-text-primary"
+                />
+              ))}
               <a
                 href={personal.resumeUrl}
                 download
