@@ -1,19 +1,64 @@
 import Link from 'next/link'
 import { getAllPosts } from '@/lib/mdx'
 import BlogCard from '@/components/ui/BlogCard'
+import { personal } from '@/data/portfolio'
+import { SITE_URL, jsonLd } from '@/lib/site'
 import type { Metadata } from 'next'
 
+const DESCRIPTION =
+  'Technical writing on Golang, Next.js, system architecture, and engineering trade-offs from production experience.'
+
 export const metadata: Metadata = {
-  title: 'Blog — Muhammad Bin Djafar Almasyhur',
-  description:
-    'Technical writing on Golang, Next.js, system architecture, and engineering trade-offs from production experience.',
+  title: `Blog — ${personal.name}`,
+  description: DESCRIPTION,
+  alternates: { canonical: '/blog' },
+  openGraph: {
+    title: `Blog — ${personal.name}`,
+    description: DESCRIPTION,
+    url: '/blog',
+    type: 'website',
+  },
 }
 
 export default function BlogIndex() {
   const posts = getAllPosts()
 
+  const structuredData = {
+    '@context': 'https://schema.org',
+    '@graph': [
+      {
+        '@type': 'Blog',
+        '@id': `${SITE_URL}/blog#blog`,
+        url: `${SITE_URL}/blog`,
+        name: `Blog — ${personal.name}`,
+        description: DESCRIPTION,
+        inLanguage: 'en',
+        author: { '@id': `${SITE_URL}/#person` },
+        publisher: { '@id': `${SITE_URL}/#person` },
+        blogPost: posts.map((post) => ({
+          '@type': 'BlogPosting',
+          '@id': `${SITE_URL}/blog/${post.slug}#post`,
+          headline: post.title,
+          url: `${SITE_URL}/blog/${post.slug}`,
+          datePublished: post.date,
+          description: post.summary,
+          keywords: post.tags,
+        })),
+      },
+      {
+        '@type': 'BreadcrumbList',
+        '@id': `${SITE_URL}/blog#breadcrumb`,
+        itemListElement: [
+          { '@type': 'ListItem', position: 1, name: 'Home', item: `${SITE_URL}/` },
+          { '@type': 'ListItem', position: 2, name: 'Blog', item: `${SITE_URL}/blog` },
+        ],
+      },
+    ],
+  }
+
   return (
     <div className="min-h-screen bg-bg text-text-primary">
+      <script type="application/ld+json" dangerouslySetInnerHTML={jsonLd(structuredData)} />
       {/* pt clears the fixed 64px navbar, then restores the original gap above
           the back link (32px on phones, 64px from sm up) */}
       <div className="mx-auto max-w-3xl px-5 pb-12 pt-24 sm:px-6 sm:pb-16 sm:pt-32">
