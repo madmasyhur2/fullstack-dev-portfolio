@@ -52,17 +52,20 @@ export default async function BlogPost({ params }: Props) {
 
   return (
     <div className="min-h-screen bg-[#0A0A0A] text-[#F0EEE6]">
-      <div className="max-w-2xl mx-auto py-16 px-6">
-        {/* Back link */}
-        <Link
-          href="/blog"
-          className="inline-flex items-center gap-2 font-mono text-xs text-[#4A4844] hover:text-[#E8FF57] transition-colors mb-12"
-        >
-          ← All posts
-        </Link>
+      <div className="max-w-2xl mx-auto py-12 sm:py-16 px-5 sm:px-6">
+        {/* Back link — py/-my pair grows the tap target to 44px without moving it,
+            so the spacing below lives on the wrapper instead of the link */}
+        <div className="mb-12">
+          <Link
+            href="/blog"
+            className="inline-flex items-center gap-2 font-mono text-xs text-[#4A4844] hover:text-[#E8FF57] transition-colors py-3.5 -my-3.5"
+          >
+            ← All posts
+          </Link>
+        </div>
 
         {/* Title */}
-        <h1 className="font-display font-extrabold text-3xl md:text-4xl text-[#F0EEE6] leading-tight mb-6">
+        <h1 className="font-display font-extrabold text-2xl sm:text-3xl md:text-4xl text-[#F0EEE6] leading-tight sm:leading-tight mb-6 break-words">
           {post.title}
         </h1>
 
@@ -97,7 +100,7 @@ export default async function BlogPost({ params }: Props) {
         <div className="border-t border-[#222220] mt-16 pt-8">
           <Link
             href="/blog"
-            className="inline-flex items-center gap-2 font-mono text-xs text-[#4A4844] hover:text-[#E8FF57] transition-colors"
+            className="inline-flex items-center gap-2 font-mono text-xs text-[#4A4844] hover:text-[#E8FF57] transition-colors py-3.5 -my-3.5"
           >
             ← Back to all posts
           </Link>

@@ -5,7 +5,6 @@ import Section from '@/components/ui/Section'
 import SectionHeading from '@/components/ui/SectionHeading'
 import { Reveal, Stagger } from '@/components/ui/Reveal'
 import ProjectCard from '@/components/ui/ProjectCard'
-import { GithubIcon } from '@/components/ui/SocialIcons'
 import { ArrowUpRight } from 'lucide-react'
 
 const areaClass: Record<BentoArea, string> = {

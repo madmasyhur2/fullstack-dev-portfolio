@@ -14,14 +14,17 @@ export default function BlogIndex() {
 
   return (
     <div className="min-h-screen bg-[#0A0A0A] text-[#F0EEE6]">
-      <div className="max-w-3xl mx-auto px-6 py-16">
-        {/* Back link */}
-        <Link
-          href="/#projects"
-          className="inline-flex items-center gap-2 font-mono text-xs text-[#4A4844] hover:text-[#E8FF57] transition-colors mb-12"
-        >
-          ← Back to portfolio
-        </Link>
+      <div className="max-w-3xl mx-auto px-5 sm:px-6 py-12 sm:py-16">
+        {/* Back link — py/-my pair grows the tap target to 44px without moving it,
+            so the spacing below lives on the wrapper instead of the link */}
+        <div className="mb-12">
+          <Link
+            href="/#projects"
+            className="inline-flex items-center gap-2 font-mono text-xs text-[#4A4844] hover:text-[#E8FF57] transition-colors py-3.5 -my-3.5"
+          >
+            ← Back to portfolio
+          </Link>
+        </div>
 
         {/* Section header */}
         <p className="font-mono text-xs text-[#E8FF57] tracking-widest uppercase mb-6">

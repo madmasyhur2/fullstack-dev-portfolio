@@ -16,7 +16,7 @@ export default function BlogCard({ post }: BlogCardProps) {
   return (
     <Link
       href={`/blog/${post.slug}`}
-      className="group block bg-[#111111] border border-[#222220] rounded-xl p-6 flex flex-col gap-4 hover:border-[#E8FF57]/30 transition-all duration-300 hover:scale-[1.01]"
+      className="group bg-[#111111] border border-[#222220] rounded-xl p-5 sm:p-6 flex flex-col gap-4 hover:border-[#E8FF57]/30 transition-all duration-300 hover:scale-[1.01]"
     >
       {/* Meta row */}
       <div className="flex items-center gap-3 text-xs font-mono text-[#4A4844]">

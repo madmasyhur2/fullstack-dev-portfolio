@@ -17,7 +17,7 @@ export default function SectionHeading({
         <span aria-hidden="true" className="h-px w-8 bg-accent" />
         <span className="label-mono text-xs text-accent">{eyebrow}</span>
       </div>
-      <h2 className="mt-4 font-display text-3xl font-semibold tracking-tight text-text-primary md:text-4xl">
+      <h2 className="mt-4 font-display text-2xl font-semibold tracking-tight text-text-primary sm:text-3xl md:text-4xl">
         {title}
       </h2>
       {subtitle && (

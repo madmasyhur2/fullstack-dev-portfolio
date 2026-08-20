@@ -30,6 +30,19 @@ html {
   scroll-behavior: smooth;
   /* anchor scrolls clear the fixed navbar */
   scroll-padding-top: 5rem;
+  /* iOS Safari inflates text after a rotation unless this is pinned */
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+}
+
+/* Safety net: one over-wide child (a long email, a code block) must never let
+   the whole page pan sideways on a phone. Confined to the root on purpose —
+   html's overflow propagates to the viewport, so the clip happens without
+   making any element a scroll container. Putting it on `body` as well would
+   turn body into one and silently break `position: sticky` descendants. */
+html {
+  width: 100%;
+  overflow-x: hidden;
 }
 
 body {
@@ -89,16 +102,40 @@ body {
   text-transform: uppercase;
 }
 
+/* Lets an unbroken string (email, URL) wrap mid-word instead of overflowing */
+.break-anywhere {
+  overflow-wrap: anywhere;
+  word-break: break-word;
+}
+
+/* Full-viewport height that survives the mobile browser toolbar sliding away.
+   Has to be one rule rather than `min-h-screen min-h-[100svh]`: Tailwind sorts
+   arbitrary values before named ones, so `.min-h-screen` would be emitted last
+   and win the cascade, pinning the element back to 100vh. Two declarations in
+   one rule give the vh fallback to browsers without svh, svh to everyone else. */
+.min-h-viewport {
+  min-height: 100vh;
+  min-height: 100svh;
+}
+
 /*
- * Projects bento grid (spec named areas, desktop ≥ 768px):
- *   [featured] [featured] [project-2]
- *   [project-3] [project-4] [project-4]
+ * Projects bento grid — three tiers:
+ *   < 768px   single column, cards stack in source order
+ *   ≥ 768px   plain 2-up grid (no named areas — tablet is too narrow for them)
+ *   ≥ 1024px  spec named areas:
+ *               [featured] [featured] [project-2]
+ *               [project-3] [project-4] [project-4]
  */
 .bento-grid {
   display: grid;
   gap: 16px;
 }
 @media (min-width: 768px) {
+  .bento-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+@media (min-width: 1024px) {
   .bento-grid {
     grid-template-columns: repeat(3, minmax(0, 1fr));
     grid-template-areas:

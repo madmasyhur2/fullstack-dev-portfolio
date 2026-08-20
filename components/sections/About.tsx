@@ -12,10 +12,10 @@ export default function About() {
     <Section id="about">
       <SectionHeading eyebrow="About" title="What I build" />
 
-      <div className="mt-12 grid gap-12 md:grid-cols-[1.1fr_0.9fr] md:gap-16">
+      <div className="mt-10 grid gap-10 sm:mt-12 sm:gap-12 md:grid-cols-[1.1fr_0.9fr] md:gap-16">
         {/* Bio — three tiers of emphasis */}
         <Reveal className="max-w-prose">
-          <p className="text-xl leading-relaxed text-text-primary">{about.lead}</p>
+          <p className="text-lg leading-relaxed text-text-primary sm:text-xl sm:leading-relaxed">{about.lead}</p>
           <p className="mt-5 leading-relaxed text-text-secondary">{about.body}</p>
           <p className="mt-5 flex items-center gap-2 text-sm text-text-secondary">
             <span aria-hidden="true" className="h-1.5 w-1.5 rounded-full bg-success" />
@@ -23,11 +23,12 @@ export default function About() {
           </p>
         </Reveal>
 
-        {/* Stack — icon grid, no visible labels (names via tooltip + a11y) */}
+        {/* Stack — icon grid. Names come from the tooltip on pointer/keyboard, and
+            from a visible caption on touch-sized screens where hover never fires. */}
         <Reveal>
           <p className="label-mono mb-4 text-xs text-text-muted">Stack</p>
           <TooltipProvider delayDuration={150} skipDelayDuration={300}>
-            <Stagger className="grid grid-cols-4 gap-3 sm:grid-cols-5 md:grid-cols-4">
+            <Stagger className="grid grid-cols-3 gap-3 sm:grid-cols-5 md:grid-cols-4">
               {stack.map((item) => (
                 <Stagger.Item key={item.slug}>
                   <Tooltip label={item.name}>
@@ -40,6 +41,12 @@ export default function About() {
                       <BrandIcon slug={item.slug} size={26} />
                     </span>
                   </Tooltip>
+                  <span
+                    aria-hidden="true"
+                    className="mt-1.5 block text-center text-[10px] leading-tight text-text-muted sm:hidden"
+                  >
+                    {item.name}
+                  </span>
                 </Stagger.Item>
               ))}
             </Stagger>

@@ -13,16 +13,16 @@ export default function Contact() {
       <SectionHeading eyebrow="Contact" title="Let's talk" />
 
       <Reveal className="mt-8 max-w-2xl">
-        <p className="text-lg leading-relaxed text-text-secondary">
+        <p className="text-base leading-relaxed text-text-secondary sm:text-lg sm:leading-relaxed">
           {personal.availability}
         </p>
 
         <a
           href={`mailto:${personal.email}`}
-          className="group mt-8 inline-flex items-center gap-3 text-2xl font-medium text-text-primary transition-colors hover:text-accent md:text-3xl"
+          className="group mt-8 inline-flex min-h-[44px] max-w-full items-center gap-3 text-base font-medium text-text-primary transition-colors hover:text-accent sm:text-2xl md:text-3xl lg:min-h-0"
         >
-          <Mail className="text-text-muted transition-colors group-hover:text-accent" size={26} />
-          {personal.email}
+          <Mail className="size-5 flex-shrink-0 text-text-muted transition-colors group-hover:text-accent sm:size-6 md:size-[26px]" />
+          <span className="min-w-0 break-anywhere">{personal.email}</span>
         </a>
 
         <div className="mt-10 flex flex-wrap gap-3">
@@ -30,7 +30,7 @@ export default function Contact() {
             href={personal.github}
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-flex min-h-[44px] items-center gap-2 rounded-lg border border-border-strong px-4 text-sm font-medium text-text-primary transition-colors hover:border-accent hover:bg-accent-soft"
+            className="inline-flex min-h-[44px] w-full items-center justify-center gap-2 rounded-lg border border-border-strong px-4 text-sm font-medium text-text-primary transition-colors hover:border-accent hover:bg-accent-soft sm:w-auto sm:justify-start"
           >
             <GithubIcon size={18} />
             GitHub
@@ -39,7 +39,7 @@ export default function Contact() {
             href={personal.linkedin}
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-flex min-h-[44px] items-center gap-2 rounded-lg border border-border-strong px-4 text-sm font-medium text-text-primary transition-colors hover:border-accent hover:bg-accent-soft"
+            className="inline-flex min-h-[44px] w-full items-center justify-center gap-2 rounded-lg border border-border-strong px-4 text-sm font-medium text-text-primary transition-colors hover:border-accent hover:bg-accent-soft sm:w-auto sm:justify-start"
           >
             <LinkedinIcon size={18} />
             LinkedIn

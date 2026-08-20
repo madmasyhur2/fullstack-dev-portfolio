@@ -14,7 +14,7 @@ export default function ProjectCard({ project }: { project: Project }) {
 
   return (
     <article
-      className={`group flex h-full flex-col rounded-card border p-6 transition-all duration-200 hover:border-accent hover:shadow-card-hover ${
+      className={`group flex h-full flex-col rounded-card border p-5 transition-all duration-200 hover:border-accent hover:shadow-card-hover sm:p-6 ${
         featured
           ? 'border-border border-l-2 border-l-accent bg-surface-raised'
           : 'border-border bg-surface'
@@ -27,8 +27,8 @@ export default function ProjectCard({ project }: { project: Project }) {
       </span>
 
       <h3
-        className={`mt-4 font-semibold leading-snug text-text-primary ${
-          featured ? 'text-xl' : 'text-lg'
+        className={`mt-4 font-semibold leading-snug text-text-primary sm:leading-snug ${
+          featured ? 'text-lg sm:text-xl' : 'text-base sm:text-lg'
         }`}
       >
         {project.title}
@@ -38,11 +38,11 @@ export default function ProjectCard({ project }: { project: Project }) {
         {project.description}
       </p>
 
-      <ul className="mt-5 flex flex-wrap gap-2">
+      <ul className="mt-5 flex min-w-0 flex-wrap gap-2">
         {project.stack.map((s) => (
           <li
             key={s}
-            className="rounded-md border border-border px-2 py-1 text-xs text-text-secondary"
+            className="break-words rounded-md border border-border px-2 py-1 text-xs text-text-secondary"
           >
             {s}
           </li>
@@ -51,12 +51,14 @@ export default function ProjectCard({ project }: { project: Project }) {
 
       {hasLinks && (
         <div className="mt-5 flex items-center gap-5 border-t border-border pt-4">
+          {/* -my-3 keeps the 44px touch target from growing the row visually;
+              released at lg, where a pointer does not need the larger box */}
           {project.github && (
             <a
               href={project.github}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center gap-1.5 text-sm text-text-secondary transition-colors hover:text-text-primary"
+              className="-my-3 inline-flex min-h-[44px] items-center gap-1.5 text-sm text-text-secondary transition-colors hover:text-text-primary lg:my-0 lg:min-h-0"
             >
               <GithubIcon size={16} />
               GitHub
@@ -67,7 +69,7 @@ export default function ProjectCard({ project }: { project: Project }) {
               href={project.demo}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center gap-1 text-sm text-text-secondary transition-colors hover:text-accent"
+              className="-my-3 inline-flex min-h-[44px] items-center gap-1 text-sm text-text-secondary transition-colors hover:text-accent lg:my-0 lg:min-h-0"
             >
               Live Demo
               <ArrowUpRight size={15} />
